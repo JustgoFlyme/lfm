@@ -68,14 +68,14 @@ public class LFM {
 		while(queue.peek()!=null);*/
 		ArrayList clusters=new ArrayList();//存放网络聚类结果
 		//ArrayList members=new ArrayList();//存放subgraph成员
-		ArrayList adjacentNodes=new ArrayList();
-		ArrayList group=new ArrayList();
+		ArrayList<Integer>adjacentNodes=new ArrayList<Integer>();
+		ArrayList group=new ArrayList<Integer>();
 		double max=0;
 		double temp1=0;
 		double temp2=0;
 		int maxNode=0;
 		while(queue.peek()!=null){
-			group.add(queue.poll());
+			group.add((Integer) queue.poll());
 			while(true){
 				//获取初始社区的邻居节点
 				for(int m=0;m<group.size();m++){
@@ -83,6 +83,14 @@ public class LFM {
 						if((AdjacentMatrix.get((int) group.get(m), i)==1)&&(!adjacentNodes.contains(i))){
 							adjacentNodes.add(i);
 						}
+					}
+				}
+				for(int n=0;n<group.size();n++){
+					if(adjacentNodes.contains(group.get(n))){
+						adjacentNodes.remove(group.get(n));
+					}
+					else{
+						continue;
 					}
 				}
 				//节点测度最大
@@ -95,7 +103,7 @@ public class LFM {
 				for(int j=1;j<adjacentNodes.size();j++){
 					group.add(adjacentNodes.get(j));
 					temp1=fitnessFunction(group,1.0);
-					group.remove(adjacentNodes.get(0));
+					group.remove(adjacentNodes.get(j));
 					temp2=fitnessFunction(group,1.0);
 					if(temp1-temp2>max){
 						max=temp1-temp2;
@@ -106,17 +114,26 @@ public class LFM {
 				if(max>0){
 					group.add(maxNode);
 					queue.remove(maxNode);
+					adjacentNodes.clear();
+					max=0;
+					maxNode=0;
+					temp1=0;
+					temp2=0;
 				}
 				else{
 					break;
 				}
 			}
-			clusters.add(group);
+			clusters.add(group.clone());
 			group.clear();
+			adjacentNodes.clear();
+			max=0;
+			maxNode=0;
+			temp1=0;
+			temp2=0;
 		}
-		for(Object q:clusters){
-			System.out.println(q);
-		}
+	   System.out.print(clusters);
+
 	}
 	//计算适应度函数，a为正实数
 	public static double fitnessFunction(ArrayList Nodes,double a){
@@ -137,7 +154,7 @@ public class LFM {
 					Kin+=1;
 				}
 			}
-			for(int k=i+1;k<restNodes.size();k++){
+			for(int k=0;k<restNodes.size();k++){
 				if(AdjacentMatrix.get(Integer.parseInt(Nodes.get(i).toString()), Integer.parseInt(restNodes.get(k).toString()))==1){
 					Kout+=1;
 				}

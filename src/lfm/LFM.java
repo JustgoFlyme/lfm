@@ -23,7 +23,7 @@ public class LFM {
 	public static void lfm(){
 		//读入网络节点邻接矩阵
 		try{
-			FileReader in=new FileReader("./test.txt");
+			FileReader in=new FileReader("./test5.txt");
 			BufferedReader br=new BufferedReader(in);
 			AdjacentMatrix=Matrix.read(br);
 		}
